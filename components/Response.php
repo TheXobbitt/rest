@@ -74,7 +74,7 @@ class Response
 
     private function prepare()
     {
-        $this->content = JsonHelper::encode(ArrayHelper::toArray($this->data));
+        $this->content = isset($this->data) ? JsonHelper::encode(ArrayHelper::toArray($this->data)) : null;
     }
 
     private function sendHeaders()
