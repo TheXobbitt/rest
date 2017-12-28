@@ -10,6 +10,7 @@ namespace rest\components;
 
 use Exception;
 use rest\controllers\Controller;
+use rest\exceptions\DomainException;
 use rest\exceptions\HttpException;
 
 class Application
@@ -82,6 +83,8 @@ class Application
         ]);
         if ($exception instanceof HttpException) {
             $response->setStatusCode($exception->statusCode);
+        } elseif ($exception instanceof DomainException) {
+            $response->setStatusCode(500);
         }
 
         return $response;

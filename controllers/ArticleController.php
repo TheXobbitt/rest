@@ -8,6 +8,7 @@
 
 namespace rest\controllers;
 
+use Exception;
 use rest\components\Request;
 use rest\components\Response;
 use rest\exceptions\HttpNotFoundException;
@@ -58,7 +59,6 @@ class ArticleController extends Controller
     /**
      * @param integer $id
      * @return Article
-     * @throws \Exception
      */
     public function actionView($id)
     {
@@ -67,7 +67,6 @@ class ArticleController extends Controller
 
     /**
      * @return Article
-     * @throws \Exception
      */
     public function actionCreate()
     {
@@ -78,7 +77,7 @@ class ArticleController extends Controller
             $this->response->getHeaders()->set('Location', '/article/' . $article->getId());
         } catch (ValidationException $exception) {
             throw new HttpValidationException($exception->getMessage());
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new HttpServerException('Article could not be saved.');
         }
 
@@ -86,35 +85,41 @@ class ArticleController extends Controller
     }
 
     /**
-     * @param integer $id
+     * @param $id
      * @return Article
-     * @throws \Exception
      */
     public function actionUpdate($id)
     {
         $bodyParams = $this->request->getBodyParams();
         $article = $this->findModel($id);
-        $article = $this->service->update($article, $bodyParams);
+        try {
+            $article = $this->service->update($article, $bodyParams);
+        } catch (ValidationException $exception) {
+            throw new HttpValidationException($exception->getMessage());
+        } catch (Exception $exception) {
+            throw new HttpServerException('Article could not be updated.');
+        }
 
         return $article;
     }
 
     /**
      * @param integer $id
-     * @return bool
-     * @throws \Exception
      */
     public function actionDelete($id)
     {
         $article = $this->findModel($id);
-
-        return $this->repository->delete($article);
+        try {
+            $this->repository->delete($article);
+            $this->response->setStatusCode(204);
+        } catch (Exception $exception) {
+            throw new HttpServerException('Article could not be deleted.');
+        }
     }
 
     /**
-     * @param integer $id
+     * @param int $id
      * @return Article
-     * @throws \Exception
      */
     private function findModel(int $id): Article
     {

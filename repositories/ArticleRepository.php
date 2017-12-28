@@ -91,7 +91,11 @@ class ArticleRepository extends Repository
      */
     public function findOne(int $id)
     {
-        $raw = $this->getDb()->query(sprintf('SELECT * FROM %s WHERE id=%d', $this->tableName, $id))->fetchArray(SQLITE3_ASSOC);
+        try {
+            $raw = $this->getDb()->query(sprintf('SELECT * FROM %s WHERE id=%d', $this->tableName, $id))->fetchArray(SQLITE3_ASSOC);
+        } catch (Exception $exception) {
+            throw new DomainException('Article was not found');
+        }
 
         return is_array($raw) ? Article::populate($raw) : null;
     }
