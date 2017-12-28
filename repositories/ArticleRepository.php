@@ -9,6 +9,7 @@
 namespace rest\repositories;
 
 use Exception;
+use rest\exceptions\DomainException;
 use rest\models\Article;
 use SQLite3Stmt;
 
@@ -29,12 +30,17 @@ class ArticleRepository extends Repository
      */
     public function insert(Article $article)
     {
-        $sql = sprintf('INSERT INTO %s (id, title, description, body) '
-            . 'VALUES (:id, :title, :description, :body)', $this->tableName);
+        $sql = sprintf('INSERT INTO %s (title, description, body) '
+            . 'VALUES (:title, :description, :body)', $this->tableName);
 
-        $stmt = $this->prepareSql($article, $sql);
-        if (!$stmt->execute()) {
-            throw new Exception('New article was not inserted.');
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->bindValue(':title', $article->getTitle(), SQLITE3_TEXT);
+        $stmt->bindValue(':description', $article->getDescription(), SQLITE3_TEXT);
+        $stmt->bindValue(':body', $article->getBody(), SQLITE3_TEXT);
+        try {
+            $stmt->execute();
+        } catch (Exception $exception) {
+            throw new DomainException('New article was not inserted.');
         }
     }
 
@@ -50,9 +56,15 @@ class ArticleRepository extends Repository
             . 'body = :body '
             . 'WHERE id = :id', $this->tableName);
 
-        $stmt = $this->prepareSql($article, $sql);
-        if (!$stmt->execute()) {
-            throw new Exception('Article was not updated.');
+        $stmt = $this->getDb()->prepare($sql);
+        $stmt->bindValue(':id', $article->getId(), SQLITE3_INTEGER);
+        $stmt->bindValue(':title', $article->getTitle(), SQLITE3_TEXT);
+        $stmt->bindValue(':description', $article->getDescription(), SQLITE3_TEXT);
+        $stmt->bindValue(':body', $article->getBody(), SQLITE3_TEXT);
+        try {
+            $stmt->execute();
+        } catch (Exception $exception) {
+            throw new DomainException('Article was not updated.');
         }
     }
 
@@ -64,23 +76,13 @@ class ArticleRepository extends Repository
     {
         $sql = sprintf('DELETE FROM %s WHERE id = %d', $this->tableName, $article->getId());
 
-        return $this->getDb()->exec($sql);
-    }
+        try {
+            $this->getDb()->exec($sql);
 
-    /**
-     * @param Article $article
-     * @param string $sql
-     * @return SQLite3Stmt
-     */
-    private function prepareSql(Article $article, $sql)
-    {
-        $stmt = $this->getDb()->prepare($sql);
-        $stmt->bindValue(':id', $article->getId(), SQLITE3_INTEGER);
-        $stmt->bindValue(':title', $article->getTitle(), SQLITE3_TEXT);
-        $stmt->bindValue(':description', $article->getDescription(), SQLITE3_TEXT);
-        $stmt->bindValue(':body', $article->getBody(), SQLITE3_TEXT);
-
-        return $stmt;
+            return true;
+        } catch (Exception $exception) {
+            throw new DomainException('Article was not deleted.');
+        }
     }
 
     /**

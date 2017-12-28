@@ -15,10 +15,42 @@ use rest\helpers\JsonHelper;
 class Response
 {
     private $headers;
+    private $statusCode = 200;
+    private $statusMessage = 'OK';
     private $data;
     private $content;
+    private $httpStatuses = [
+        200 => 'OK',
+        201 => 'Created',
+        400 => 'Bad Request',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        422 => 'Unprocessable entity',
+        500 => 'Internal Server Error',
+    ];
 
-    public function __construct($data)
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param int $statusCode
+     */
+    public function setStatusCode(int $statusCode): void
+    {
+        $this->statusCode = $statusCode;
+        $this->statusMessage = $this->httpStatuses[$statusCode] ?? 'OK';
+    }
+
+    /**
+     * @param mixed $data
+     */
+    public function setData($data): void
     {
         $this->data = $data;
     }
@@ -50,6 +82,8 @@ class Response
         foreach ($headers as $name => $value) {
             header($name . ':' . $value);
         }
+        header('Content-Type:application/json; charset=UTF-8');
+        header("HTTP/1.1 $this->statusCode $this->statusMessage");
     }
 
     private function sendContent()

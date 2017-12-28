@@ -39,13 +39,13 @@ class ArticleService
     public function create(array $articleData): Article
     {
         $article = Article::create(
-            $articleData['id'] ?? '',
             $articleData['title'] ?? '',
             $articleData['description'] ?? '',
             $articleData['body'] ?? ''
         );
 
         $this->repository->insert($article);
+        $article->setId($this->repository->getLastInsertedId());
 
         return $article;
     }

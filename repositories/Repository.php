@@ -41,4 +41,12 @@ abstract class Repository
     {
         return $this->connection->getPdo();
     }
+
+    /**
+     * @return integer
+     */
+    public function getLastInsertedId()
+    {
+        return $this->getDb()->lastInsertRowID();
+    }
 }

@@ -8,10 +8,28 @@
 
 namespace rest\controllers;
 
+use rest\components\Request;
 use rest\components\Response;
+use yii\web\NotFoundHttpException;
 
 class Controller
 {
+    private $collectionOptions = ['GET', 'POST', 'HEAD', 'OPTIONS'];
+    private $resourceOptions = ['GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+    protected $request;
+    protected $response;
+
+    /**
+     * Controller constructor.
+     * @param Request $request
+     * @param Response $response
+     */
+    public function __construct(Request $request, Response $response)
+    {
+        $this->request = $request;
+        $this->response = $response;
+    }
+
     /**
      * @param string $actionId
      * @param array $args
@@ -22,13 +40,22 @@ class Controller
     {
         $action = sprintf('action%s', ucfirst($actionId));
         if (!method_exists($this, $action)) {
-            throw new \Exception('Action does not exist.');
+            throw new NotFoundHttpException('Action does not exist.');
         }
 
         $data = call_user_func_array([$this, $action], $args);
-        $response = new Response($data);
-        $response->getHeaders()->set('Content-Type', 'application/json;charset=UTF-8');
+        $this->response->setData($data);
 
-        return $response;
+        return $this->response;
+    }
+
+    /**
+     * Options action. Shows what methods are available.
+     * @param null $id
+     */
+    public function actionOptions($id = null)
+    {
+        $options = ($id === null) ? $this->collectionOptions : $this->resourceOptions;
+        $this->response->getHeaders()->set('Allow', implode(', ', $options));
     }
 }

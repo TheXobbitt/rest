@@ -9,6 +9,11 @@
 namespace rest\controllers;
 
 use rest\components\Request;
+use rest\components\Response;
+use rest\exceptions\HttpNotFoundException;
+use rest\exceptions\HttpServerException;
+use rest\exceptions\HttpValidationException;
+use rest\exceptions\ValidationException;
 use rest\models\Article;
 use rest\repositories\ArticleRepository;
 use rest\services\ArticleService;
@@ -27,22 +32,19 @@ class ArticleController extends Controller
      * @var ArticleService
      */
     private $service;
-    /**
-     * @var Request
-     */
-    private $request;
 
     /**
      * ArticleController constructor.
+     * @param Request $request
+     * @param Response $response
      * @param ArticleRepository $articleRepository
      * @param ArticleService $articleService
-     * @param Request $request
      */
-    public function __construct(ArticleRepository $articleRepository, ArticleService $articleService, Request $request)
+    public function __construct(Request $request, Response $response, ArticleRepository $articleRepository, ArticleService $articleService)
     {
+        parent::__construct($request, $response);
         $this->repository = $articleRepository;
         $this->service = $articleService;
-        $this->request = $request;
     }
 
     /**
@@ -70,7 +72,15 @@ class ArticleController extends Controller
     public function actionCreate()
     {
         $bodyParams = $this->request->getBodyParams();
-        $article = $this->service->create($bodyParams);
+        try {
+            $article = $this->service->create($bodyParams);
+            $this->response->setStatusCode(201);
+            $this->response->getHeaders()->set('Location', '/article/' . $article->getId());
+        } catch (ValidationException $exception) {
+            throw new HttpValidationException($exception->getMessage());
+        } catch (\Exception $exception) {
+            throw new HttpServerException('Article could not be saved.');
+        }
 
         return $article;
     }
@@ -109,7 +119,7 @@ class ArticleController extends Controller
     private function findModel(int $id): Article
     {
         if (!$model = $this->repository->findOne($id)) {
-            throw new \Exception('Article was not found.');
+            throw new HttpNotFoundException('Article was not found.');
         }
 
         return $model;

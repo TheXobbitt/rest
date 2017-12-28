@@ -8,7 +8,7 @@
 
 namespace rest\models;
 
-use UnexpectedValueException;
+use rest\exceptions\ValidationException;
 
 /**
  * Class Article
@@ -39,16 +39,14 @@ class Article extends Model
     private function __construct() {}
 
     /**
-     * @param int $id
      * @param string $title
      * @param string $description
      * @param string $body
      * @return Article
      */
-    public static function create(int $id, string $title, string $description, string $body): Article
+    public static function create(string $title, string $description, string $body): Article
     {
         $article = new self();
-        $article->setId($id);
         $article->setTitle($title);
         $article->setDescription($description);
         $article->setBody($body);
@@ -86,7 +84,7 @@ class Article extends Model
     public function setTitle(string $title): void
     {
         if (empty($title)) {
-            throw new UnexpectedValueException('Title must be set');
+            throw new ValidationException('Title must be set');
         }
         $this->title = $title;
     }
@@ -97,7 +95,7 @@ class Article extends Model
     public function setDescription(string $description): void
     {
         if (empty($description)) {
-            throw new UnexpectedValueException('Description must be set');
+            throw new ValidationException('Description must be set');
         }
         $this->description = $description;
     }
@@ -108,7 +106,7 @@ class Article extends Model
     public function setBody(string $body): void
     {
         if (empty($body)) {
-            throw new UnexpectedValueException('Body must be set');
+            throw new ValidationException('Body must be set');
         }
         $this->body = $body;
     }

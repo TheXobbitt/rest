@@ -43,7 +43,7 @@ final class Container
      */
     private function __clone() {}
 
-    private function set($id, $value)
+    public function set($id, $value)
     {
         $this->shared[$id] = null;
         $this->definitions[$id] = [

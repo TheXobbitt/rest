@@ -10,6 +10,7 @@ namespace rest\components;
 
 use rest\collections\UrlRuleCollection;
 use rest\dto\UrlRule;
+use rest\exceptions\HttpNotFoundException;
 use rest\helpers\ArrayHelper;
 
 class Router
@@ -19,6 +20,10 @@ class Router
      */
     private $rules;
 
+    /**
+     * Router constructor.
+     * @param UrlRuleCollection $rules
+     */
     public function __construct(UrlRuleCollection $rules)
     {
         $this->rules = $rules;
@@ -43,6 +48,6 @@ class Router
             }
         }
 
-        throw new \Exception('Page not found.');
+        throw new HttpNotFoundException();
     }
 }

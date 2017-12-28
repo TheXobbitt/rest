@@ -8,7 +8,9 @@
 
 namespace rest\components;
 
+use Exception;
 use rest\controllers\Controller;
+use rest\exceptions\HttpException;
 
 class Application
 {
@@ -20,24 +22,24 @@ class Application
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function run()
     {
         $request = Container::getInstance()->get('request');
-//        try {
+        try {
             $response = $this->handleRequest($request);
+        } catch (Exception $exception) {
+            $response = $this->handleError($exception);
+        }
 
-            $response->send();
-//        } catch (\Exception $exception) {
-//        }
-
+        $response->send();
     }
 
     /**
      * @param Request $request
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     private function handleRequest(Request $request)
     {
@@ -52,18 +54,36 @@ class Application
     /**
      * @param string $id
      * @return Controller
-     * @throws \Exception
+     * @throws Exception
      */
     private function createController(string $id)
     {
         $className = sprintf('\\rest\\controllers\\%sController', ucfirst($id));
         if (!class_exists($className)) {
-            throw new \Exception('Class does not exist');
+            throw new Exception('Class does not exist');
         }
 
         Container::getInstance()->setShared($className, $className);
         $controller = Container::getInstance()->get($className);
 
         return $controller;
+    }
+
+    /**
+     * @param Exception $exception
+     * @return Response
+     */
+    private function handleError(Exception $exception): Response
+    {
+        $response = new Response();
+        $response->setData([
+            'Success' => false,
+            'Message' => $exception->getMessage()
+        ]);
+        if ($exception instanceof HttpException) {
+            $response->setStatusCode($exception->statusCode);
+        }
+
+        return $response;
     }
 }
