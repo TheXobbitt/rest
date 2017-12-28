@@ -4,7 +4,8 @@
   },
   "autoload": {
     "psr-4": {
-      "rest\\": ""
+      "rest\\": "api/",
+      "base\\": "base/"
     }
   }
 }
