@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./docker/nginx
+    volumes:
+      - .:/var/www/html
+    links:
+      - fpm
+    ports:
+      - "80:80"
+  fpm:
+    build: ./docker/fpm
+    volumes:
+      - .:/var/www/html
+    environment:
+      XDEBUG_CONFIG: remote_host=192.168.1.168
