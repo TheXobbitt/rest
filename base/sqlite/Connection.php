@@ -20,12 +20,18 @@ class Connection
      * @var SQLite3
      */
     private $pdo;
+    /**
+     * @var string
+     */
+    private $dbName;
 
     /**
      * Connection constructor.
+     * @param string $dbName
      */
-    public function __construct()
+    public function __construct(string $dbName)
     {
+        $this->dbName = $dbName;
         $this->open();
     }
 
@@ -38,7 +44,7 @@ class Connection
             return;
         }
 
-        $this->pdo = new SQLite3('data/pdffiller.db');
+        $this->pdo = new SQLite3($this->dbName);
     }
 
     /**
