@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: xobbitt
+ * User: Oleksandr Blakov
  * Date: 12/26/17
  * Time: 20:11
  */
@@ -13,22 +13,33 @@ use rest\controllers\Controller;
 use rest\exceptions\DomainException;
 use rest\exceptions\HttpException;
 
+/**
+ * Class Application
+ * @package rest\components
+ */
 class Application
 {
+    /**
+     * @var Router
+     */
     private $router;
 
+    /**
+     * Application constructor.
+     * @param Router $router
+     */
     public function __construct(Router $router)
     {
         $this->router = $router;
     }
 
     /**
-     * @throws Exception
+     * Runs application.
      */
     public function run()
     {
-        $request = Container::getInstance()->get('request');
         try {
+            $request = Container::getInstance()->get('request');
             $response = $this->handleRequest($request);
         } catch (Exception $exception) {
             $response = $this->handleError($exception);
