@@ -22,11 +22,11 @@ class ArticleController extends Controller
     /**
      * @var ArticleRepository
      */
-    private $articleRepository;
+    private $repository;
     /**
      * @var ArticleService
      */
-    private $articleService;
+    private $service;
     /**
      * @var Request
      */
@@ -40,8 +40,8 @@ class ArticleController extends Controller
      */
     public function __construct(ArticleRepository $articleRepository, ArticleService $articleService, Request $request)
     {
-        $this->articleRepository = $articleRepository;
-        $this->articleService = $articleService;
+        $this->repository = $articleRepository;
+        $this->service = $articleService;
         $this->request = $request;
     }
 
@@ -50,12 +50,13 @@ class ArticleController extends Controller
      */
     public function actionIndex()
     {
-        return $this->articleRepository->findAll();
+        return $this->repository->findAll();
     }
 
     /**
      * @param integer $id
      * @return Article
+     * @throws \Exception
      */
     public function actionView($id)
     {
@@ -63,13 +64,13 @@ class ArticleController extends Controller
     }
 
     /**
-     *
+     * @return Article
      * @throws \Exception
      */
     public function actionCreate()
     {
         $bodyParams = $this->request->getBodyParams();
-        $article = $this->articleService->create($bodyParams);
+        $article = $this->service->create($bodyParams);
 
         return $article;
     }
@@ -82,26 +83,35 @@ class ArticleController extends Controller
     public function actionUpdate($id)
     {
         $bodyParams = $this->request->getBodyParams();
-        $article = $this->articleService->update($id, $bodyParams);
+        $article = $this->findModel($id);
+        $article = $this->service->update($article, $bodyParams);
 
         return $article;
     }
 
     /**
-     * @param $id
+     * @param integer $id
      * @return bool
+     * @throws \Exception
      */
     public function actionDelete($id)
     {
-        return $this->articleRepository->delete($id);
+        $article = $this->findModel($id);
+
+        return $this->repository->delete($article);
     }
 
     /**
      * @param integer $id
-     * @return \rest\models\Article
+     * @return Article
+     * @throws \Exception
      */
     private function findModel(int $id): Article
     {
-        return $this->articleRepository->findOne($id);
+        if (!$model = $this->repository->findOne($id)) {
+            throw new \Exception('Article was not found.');
+        }
+
+        return $model;
     }
 }

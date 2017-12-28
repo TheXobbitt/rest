@@ -10,6 +10,10 @@ namespace rest\sqlite;
 
 use SQLite3;
 
+/**
+ * Class Connection
+ * @package rest\sqlite
+ */
 class Connection
 {
     /**
@@ -17,11 +21,17 @@ class Connection
      */
     private $pdo;
 
+    /**
+     * Connection constructor.
+     */
     public function __construct()
     {
         $this->open();
     }
 
+    /**
+     * Opens connection to db.
+     */
     public function open()
     {
         if (!is_null($this->pdo)) {
@@ -31,6 +41,9 @@ class Connection
         $this->pdo = new SQLite3('data/pdffiller.db');
     }
 
+    /**
+     * Closes connection to db.
+     */
     public function close()
     {
         $this->pdo->close();
@@ -38,6 +51,7 @@ class Connection
     }
 
     /**
+     * Return pdo statement.
      * @return SQLite3
      */
     public function getPdo(): SQLite3

@@ -8,31 +8,30 @@
 
 namespace rest\models;
 
-use rest\components\Arrayable;
 use UnexpectedValueException;
 
 /**
  * Class Article
  * @package rest\models
  */
-class Article implements Arrayable
+class Article extends Model
 {
     /**
      * @var
      */
-    private $id;
+    protected $id;
     /**
      * @var
      */
-    private $title;
+    protected $title;
     /**
      * @var
      */
-    private $description;
+    protected $description;
     /**
      * @var
      */
-    private $body;
+    protected $body;
 
     /**
      * Article constructor.
@@ -160,18 +159,5 @@ class Article implements Arrayable
         }
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
-            'body' => $this->body,
-        ];
     }
 }

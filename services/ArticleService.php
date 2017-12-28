@@ -11,10 +11,21 @@ namespace rest\services;
 use rest\models\Article;
 use rest\repositories\ArticleRepository;
 
+/**
+ * Class ArticleService
+ * @package rest\services
+ */
 class ArticleService
 {
+    /**
+     * @var ArticleRepository
+     */
     private $repository;
 
+    /**
+     * ArticleService constructor.
+     * @param ArticleRepository $repository
+     */
     public function __construct(ArticleRepository $repository)
     {
         $this->repository = $repository;
@@ -25,7 +36,7 @@ class ArticleService
      * @return Article
      * @throws \Exception
      */
-    public function create($articleData): Article
+    public function create(array $articleData): Article
     {
         $article = Article::create(
             $articleData['id'] ?? '',
@@ -40,14 +51,13 @@ class ArticleService
     }
 
     /**
-     * @param integer $articleId
+     * @param Article $article
      * @param array $articleData
      * @return Article
      * @throws \Exception
      */
-    public function update(int $articleId, array $articleData): Article
+    public function update(Article $article, array $articleData): Article
     {
-        $article = $this->repository->findOne($articleId);
         if (isset($articleData['id'])) {
             unset($articleData['id']);
         }
