@@ -13,5 +13,5 @@ use base\sqlite\Connection;
 $container = Container::getInstance();
 $container->setShared('request', Request::class);
 $container->setShared(Connection::class, function (Container $container) {
-    return new Connection('data/api.db');
+    return new Connection('data/auth.db');
 });

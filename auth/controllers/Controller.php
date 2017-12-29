@@ -2,21 +2,29 @@
 /**
  * Created by PhpStorm.
  * User: Oleksandr Blakov
- * Date: 12/27/17
- * Time: 13:44
+ * Date: 12/29/17
+ * Time: 02:03
  */
 
-namespace rest\controllers;
+namespace auth\controllers;
 
 use base\components\Request;
 use base\components\Response;
 use base\exceptions\HttpNotFoundException;
 
+/**
+ * Class Controller
+ * @package auth\controllers
+ */
 class Controller
 {
-    private $collectionOptions = ['GET', 'POST', 'OPTIONS'];
-    private $resourceOptions = ['GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
+    /**
+     * @var Request
+     */
     protected $request;
+    /**
+     * @var Response
+     */
     protected $response;
 
     /**
@@ -49,13 +57,4 @@ class Controller
         return $this->response;
     }
 
-    /**
-     * Options action. Shows what methods are available.
-     * @param null $id
-     */
-    public function actionOptions($id = null)
-    {
-        $options = ($id === null) ? $this->collectionOptions : $this->resourceOptions;
-        $this->response->getHeaders()->set('Allow', implode(', ', $options));
-    }
 }

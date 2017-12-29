@@ -15,5 +15,5 @@ require_once __DIR__ . '/configs/bootstrap.php';
 $urlRules = require_once __DIR__ . '/configs/routes.php';
 $router = new Router($urlRules);
 
-$application = new Application($router, '\\rest\\controllers');
+$application = new Application($router, '\\auth\\controllers');
 $application->run();

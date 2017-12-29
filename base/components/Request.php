@@ -53,6 +53,9 @@ class Request
             }
 
             $this->bodyParams = JsonParser::parse($this->getRawBody());
+            if (!$this->bodyParams && $this->getMethod() == 'POST') {
+                $this->bodyParams = $_POST;
+            }
         }
 
         return $this->bodyParams;

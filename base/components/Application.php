@@ -23,14 +23,19 @@ class Application
      * @var Router
      */
     private $router;
+    /**
+     * @var string
+     */
+    private $controllerNamespace;
 
     /**
      * Application constructor.
      * @param Router $router
      */
-    public function __construct(Router $router)
+    public function __construct(Router $router, string $controllerNamespace)
     {
         $this->router = $router;
+        $this->controllerNamespace = $controllerNamespace;
     }
 
     /**
@@ -70,7 +75,7 @@ class Application
      */
     private function createController(string $id)
     {
-        $className = sprintf('\\rest\\controllers\\%sController', ucfirst($id));
+        $className = sprintf('%s\\%sController', $this->controllerNamespace, ucfirst($id));
         if (!class_exists($className)) {
             throw new Exception('Class does not exist');
         }
