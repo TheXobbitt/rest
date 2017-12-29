@@ -58,4 +58,10 @@ return new UrlRuleCollection([
         'options',
         'OPTIONS'
     ),
+    new UrlRule(
+        '/users/login',
+        'user',
+        'login',
+        'POST'
+    ),
 ]);
