@@ -43,6 +43,6 @@ DELETE http://localhost/articles/<id>
 POST http://localhost:8080/token
 ```
 
-Available only (Resource Owner Password Credentials)[https://tools.ietf.org/html/draft-ietf-oauth-v2-13#section-4.3] grant type
+Available only [Resource Owner Password Credentials](https://tools.ietf.org/html/draft-ietf-oauth-v2-13#section-4.3) grant type
 
 API server sends http requests to OAuth server via curl and docker network.
