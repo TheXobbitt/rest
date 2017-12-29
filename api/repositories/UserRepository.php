@@ -79,4 +79,21 @@ class UserRepository extends Repository
 
         return is_array($raw) ? User::populate($raw) : null;
     }
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function existByToken(string $token)
+    {
+        try {
+            $raw = $this->getDb()
+                ->query(sprintf('SELECT * FROM %s WHERE token="%s"', $this->tableName, $token))
+                ->fetchArray(SQLITE3_ASSOC);
+        } catch (Exception $exception) {
+            return false;
+        }
+
+        return is_array($raw) ? true : false;
+    }
 }

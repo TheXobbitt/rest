@@ -17,6 +17,7 @@ use base\exceptions\HttpValidationException;
 use base\exceptions\ValidationException;
 use rest\models\Article;
 use rest\repositories\ArticleRepository;
+use rest\repositories\UserRepository;
 use rest\services\ArticleService;
 
 /**
@@ -33,17 +34,29 @@ class ArticleController extends Controller
      * @var ArticleService
      */
     private $service;
+    /**
+     * Specifies actions to check access.
+     * @var array
+     */
+    protected $checkActions = ['index', 'view', 'create', 'update', 'delete'];
 
     /**
      * ArticleController constructor.
      * @param Request $request
      * @param Response $response
+     * @param UserRepository $userRepository
      * @param ArticleRepository $articleRepository
      * @param ArticleService $articleService
      */
-    public function __construct(Request $request, Response $response, ArticleRepository $articleRepository, ArticleService $articleService)
+    public function __construct(
+        Request $request,
+        Response $response,
+        UserRepository $userRepository,
+        ArticleRepository $articleRepository,
+        ArticleService $articleService
+    )
     {
-        parent::__construct($request, $response);
+        parent::__construct($request, $response, $userRepository);
         $this->repository = $articleRepository;
         $this->service = $articleService;
     }

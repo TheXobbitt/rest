@@ -18,10 +18,6 @@ use rest\services\UserService;
 class UserController extends Controller
 {
     /**
-     * @var UserRepository
-     */
-    private $repository;
-    /**
      * @var UserService
      */
     private $service;
@@ -30,13 +26,12 @@ class UserController extends Controller
      * UserController constructor.
      * @param Request $request
      * @param Response $response
-     * @param UserRepository $repository
+     * @param UserRepository $userRepository
      * @param UserService $service
      */
-    public function __construct(Request $request, Response $response, UserRepository $repository, UserService $service)
+    public function __construct(Request $request, Response $response, UserRepository $userRepository, UserService $service)
     {
-        parent::__construct($request, $response);
-        $this->repository = $repository;
+        parent::__construct($request, $response, $userRepository);
         $this->service = $service;
     }
 

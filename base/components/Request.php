@@ -121,4 +121,18 @@ class Request
 
         return $pathInfo;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getBearerToken()
+    {
+        if ($auth = $this->getHeaders()->get('Authorization')) {
+            $token = explode(' ', $auth);
+
+            return $token[1] ?? null;
+        }
+
+        return null;
+    }
 }
